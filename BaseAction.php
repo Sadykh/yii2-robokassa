@@ -1,12 +1,11 @@
 <?php
-
-namespace robokassa;
-
+namespace sadykh\robokassa;
 
 use yii\base\Action;
 use yii\base\InvalidConfigException;
 
-class BaseAction extends Action {
+class BaseAction extends Action
+{
     public $merchant = 'robokassa';
 
     public $callback;

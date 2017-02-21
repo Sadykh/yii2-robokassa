@@ -1,12 +1,11 @@
 <?php
-
-namespace robokassa;
+namespace sadykh\robokassa;
 
 use Yii;
 use yii\web\BadRequestHttpException;
 
-
-class FailAction extends BaseAction {
+class FailAction extends BaseAction
+{
 
     /**
      * Runs the action.
@@ -17,7 +16,7 @@ class FailAction extends BaseAction {
             throw new BadRequestHttpException;
         }
 
-        /** @var \robokassa\Merchant $merchant */
+        /** @var Merchant $merchant */
         $merchant = Yii::$app->get($this->merchant);
 
         $shp = [];

@@ -1,8 +1,8 @@
 <?php
-
-namespace robokassa;
+namespace sadykh\robokassa;
 
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\base\Object;
 
 class Merchant extends Object
@@ -16,7 +16,15 @@ class Merchant extends Object
 
     public $baseUrl = 'https://auth.robokassa.ru/Merchant/Index.aspx';
 
-    public function payment($nOutSum, $nInvId, $sInvDesc = null, $sIncCurrLabel=null, $sEmail = null, $sCulture = null, $shp = [], $returnLink = false)
+    public function init()
+    {
+        if ($this->sMerchantLogin || $this->sMerchantPass1 || $this->sMerchantPass2) {
+            throw new InvalidConfigException("Invalid config found.");
+        }
+    }
+
+    public function payment($nOutSum, $nInvId, $sInvDesc = null, $sIncCurrLabel = null,
+                            $sEmail = null, $sCulture = null, $shp = [], $returnLink = false)
     {
         $url = $this->baseUrl;
 
@@ -27,22 +35,22 @@ class Merchant extends Object
         $sSignatureValue = md5($signature);
 
         $url .= '?' . http_build_query([
-            'MrchLogin' => $this->sMerchantLogin,
-            'OutSum' => $nOutSum,
-            'InvId' => $nInvId,
-            'Desc' => $sInvDesc,
-            'SignatureValue' => $sSignatureValue,
-            'IncCurrLabel' => $sIncCurrLabel,
-            'Email' => $sEmail,
-            'Culture' => $sCulture,
-            'IsTest' => (int)$this->isTest,
-        ]);
+                'MrchLogin' => $this->sMerchantLogin,
+                'OutSum' => $nOutSum,
+                'InvId' => $nInvId,
+                'Desc' => $sInvDesc,
+                'SignatureValue' => $sSignatureValue,
+                'IncCurrLabel' => $sIncCurrLabel,
+                'Email' => $sEmail,
+                'Culture' => $sCulture,
+                'IsTest' => (int)$this->isTest,
+            ]);
 
         if (!empty($shp) && ($query = http_build_query($shp)) !== '') {
             $url .= '&' . $query;
         }
-        
-        if ( !$returnLink ){
+
+        if (!$returnLink) {
             Yii::$app->user->setReturnUrl(Yii::$app->request->getUrl());
             return Yii::$app->response->redirect($url);
         } else {
@@ -53,14 +61,14 @@ class Merchant extends Object
     private function implodeShp($shp)
     {
         ksort($shp);
-        foreach($shp as $key => $value) {
+        foreach ($shp as $key => $value) {
             $shp[$key] = $key . '=' . $value;
         }
 
         return implode(':', $shp);
     }
 
-    public  function checkSignature($sSignatureValue, $nOutSum, $nInvId, $sMerchantPass, $shp)
+    public function checkSignature($sSignatureValue, $nOutSum, $nInvId, $sMerchantPass, $shp)
     {
         $signature = "{$nOutSum}:{$nInvId}:{$sMerchantPass}";
         if (!empty($shp)) {

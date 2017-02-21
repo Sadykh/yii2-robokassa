@@ -4,7 +4,7 @@ yii2-robokassa
 ## Install via Composer
 
 ~~~
-composer require yii-cms/yii2-robokassa
+composer require sadykh/yii2-robokassa
 ~~~
 
 ## Configuration
@@ -12,7 +12,7 @@ composer require yii-cms/yii2-robokassa
 ```php
 'components' => [
     'robokassa' => [
-        'class' => '\robokassa\Merchant',
+        'class' => '\sadykh\robokassa',
         'baseUrl' => 'https://auth.robokassa.ru/Merchant/Index.aspx',
         'sMerchantLogin' => '',
         'sMerchantPass1' => '',
@@ -32,7 +32,7 @@ class PaymentController extends Controller
     {
         $model = new Invoice();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            /** @var \robokassa\Merchant $merchant */
+            /** @var \sadykh\robokassa\Merchant $merchant */
             $merchant = Yii::$app->get('robokassa');
             return $merchant->payment($model->sum, $model->id, 'Пополнение счета', null, Yii::$app->user->identity->email);
         } else {
@@ -65,7 +65,7 @@ class PaymentController extends Controller
 
 	/**
 	 * Callback.
-     * @param \robokassa\Merchant $merchant merchant.
+     * @param \sadykh\robokassa\Merchant $merchant merchant.
      * @param integer $nInvId invoice ID.
      * @param float $nOutSum sum.
      * @param array $shp user attributes.
