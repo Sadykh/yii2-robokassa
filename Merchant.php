@@ -18,7 +18,7 @@ class Merchant extends Object
 
     public function init()
     {
-        if ($this->sMerchantLogin || $this->sMerchantPass1 || $this->sMerchantPass2) {
+        if (!$this->sMerchantLogin || !$this->sMerchantPass1 || !$this->sMerchantPass2) {
             throw new InvalidConfigException("Invalid config found.");
         }
     }
